@@ -43,17 +43,25 @@ input[type="password"]{
 
 button {
     width: 100%;
-    margin-top: 13px;
-    padding: 7px;
+    margin:5px 0;
+    padding: 6px;
     background-color: #007bff;
+    color: #fff;
     border: none;
     border-radius: 4px;
-    color: #fff;
+    font-size: 1.05rem;
     cursor: pointer;
+    transition: background 0.2s;
+    box-sizing: border-box;
 }
 
 button:hover {
     background-color: #0056b3;
+}
+
+button + button {
+    margin-top: 10px;
+
 }
 
 .error-message {
@@ -63,7 +71,7 @@ button:hover {
 }
 
 .success-message {
-    color: green;
+    color:#0056b3;
     margin: 5px 0;
     text-align: center;
 }
@@ -74,7 +82,7 @@ button:hover {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 32px; /* Add space below welcome section */
+    margin-bottom: 25px; /* Add space below welcome section */
 }
 
 .content h2 {
@@ -115,7 +123,7 @@ background-color: skyblue;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 32px;
+    margin-top: 7px;
     margin-bottom: 16px;
     font-size: 0.92rem;
 }
@@ -126,12 +134,12 @@ background-color: skyblue;
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 10px 12px;
-    margin-bottom: 12px;
+    margin-bottom: 2px; /* Reduced margin */
     display: flex;
-    flex-direction: column;      /* Vertical layout */
-    align-items: flex-start;     /* Align to left */
+    flex-direction: column;
+    align-items: flex-start;
     font-size: 0.95rem;
-    gap: 6px;                    /* Space between fields */
+    gap: 6px;
 }
 
 /* Each info column gets equal width except quantity */
@@ -173,4 +181,66 @@ background-color: skyblue;
     text-align: center;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+.add-product-form {
+    background: #f9f9f9;
+    border: 1.5px solid #007bff;
+    border-radius: 10px;
+    padding: 18px 18px 12px 18px;
+    margin: 18px 0 24px 0;
+    width: 370px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.06);
+}
+
+.input-box.large {
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.input-box.small {
+    width: 48%;
+}
+
+.product-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: #fff;
+    transition: border 0.2s;
+}
+
+.product-input:focus::placeholder {
+    color: transparent;
+}
+
+.add-product-btn {
+    width: 100%;
+    padding: 8px 0;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.add-product-main-btn {
+    width: 100%;
+    margin: 13px 0;
+    padding: 7px;
+    background-color:#007bff;   /* Blue */
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-product-main-btn:hover {
+    background-color: #0056b3;   /* Light blue on hover */
 }

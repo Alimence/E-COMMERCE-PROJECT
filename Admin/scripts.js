@@ -208,6 +208,22 @@ const displayContent = (role) => {
             displayProducts();
         };
         contentDiv.appendChild(viewProductsBtn);
+
+        const addProductSection = document.createElement('div');
+        addProductSection.className = 'add-product-section';
+
+        const addProductBtn = document.createElement('button');
+        addProductBtn.textContent = 'Add Product';
+        addProductBtn.type = 'button';
+        addProductBtn.className = 'add-product-main-btn';
+        addProductBtn.onclick = () => {
+            // Remove other sections
+            document.querySelectorAll('.user-management, .products-section, .add-product-form').forEach(el => el.remove());
+            showAddProductSection();
+        };
+
+        addProductSection.appendChild(addProductBtn);
+        contentDiv.appendChild(addProductSection);
     } else if (role === 'editor') {
         const viewProductsBtn = document.createElement('button');
         viewProductsBtn.textContent = 'View Products';
@@ -292,3 +308,217 @@ const logout = () => {
     clearCurrentUser();
     location.reload();
 };
+
+function showAddProductForm(contentDiv) {
+    // Remove any existing form
+    const existingForm = document.querySelector('.add-product-form');
+    if (existingForm) existingForm.remove();
+
+    // Create form container
+    const formDiv = document.createElement('div');
+    formDiv.className = 'add-product-form';
+
+    // Product Name input
+    const productNameBox = document.createElement('div');
+    productNameBox.className = 'input-box large';
+    const productNameInput = document.createElement('input');
+    productNameInput.type = 'text';
+    productNameInput.className = 'product-input';
+    productNameInput.required = true;
+    productNameInput.placeholder = 'Product Name';
+    productNameBox.appendChild(productNameInput);
+
+    // Description input
+    const descBox = document.createElement('div');
+    descBox.className = 'input-box large';
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.className = 'product-input';
+    descInput.required = true;
+    descInput.placeholder = 'Description';
+    descBox.appendChild(descInput);
+
+    // Price and Amount (side by side)
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '12px';
+    row.style.marginTop = '10px';
+
+    const priceBox = document.createElement('div');
+    priceBox.className = 'input-box small';
+    const priceInput = document.createElement('input');
+    priceInput.type = 'text';
+    priceInput.className = 'product-input';
+    priceInput.required = true;
+    priceInput.placeholder = 'Price';
+    priceBox.appendChild(priceInput);
+
+    const amountBox = document.createElement('div');
+    amountBox.className = 'input-box small';
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.className = 'product-input';
+    amountInput.required = true;
+    amountInput.placeholder = 'Amount';
+    amountBox.appendChild(amountInput);
+
+    row.appendChild(priceBox);
+    row.appendChild(amountBox);
+
+    // Add Product button
+    const addBtnBox = document.createElement('div');
+    addBtnBox.className = 'input-box large';
+    addBtnBox.style.marginTop = '14px';
+    const addBtn = document.createElement('button');
+    addBtn.textContent = 'Add Product';
+    addBtn.type = 'button';
+    addBtn.className = 'add-product-btn';
+    addBtnBox.appendChild(addBtn);
+
+    // Append all to form
+    formDiv.appendChild(productNameBox);
+    formDiv.appendChild(descBox);
+    formDiv.appendChild(row);
+    formDiv.appendChild(addBtnBox);
+
+    // Add form to contentDiv
+    contentDiv.appendChild(formDiv);
+
+    // Add logic to hide placeholder on typing (handled by default with placeholder attribute)
+
+    // Add product logic
+    addBtn.onclick = () => {
+        const name = productNameInput.value.trim();
+        const desc = descInput.value.trim();
+        const price = priceInput.value.trim();
+        const amount = parseInt(amountInput.value, 10);
+
+        if (!name || !desc || !price || isNaN(amount)) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        products.push({
+            name,
+            description: desc,
+            price,
+            quantity: amount
+        });
+
+        formDiv.remove();
+        displayProducts();
+    };
+}
+
+function showAddProductSection() {
+    // Remove any existing add product form
+    document.querySelectorAll('.add-product-form').forEach(el => el.remove());
+
+    const formDiv = document.createElement('div');
+    formDiv.className = 'add-product-form';
+
+    // Heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'Add Product';
+    heading.style.textAlign = 'center';
+    heading.style.marginBottom = '16px';
+    formDiv.appendChild(heading);
+
+    // Product Name input
+    const productNameBox = document.createElement('div');
+    productNameBox.className = 'input-box large';
+    const productNameInput = document.createElement('input');
+    productNameInput.type = 'text';
+    productNameInput.className = 'product-input';
+    productNameInput.required = true;
+    productNameInput.placeholder = 'Product Name';
+    productNameBox.appendChild(productNameInput);
+
+    // Description input
+    const descBox = document.createElement('div');
+    descBox.className = 'input-box large';
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.className = 'product-input';
+    descInput.required = true;
+    descInput.placeholder = 'Description';
+    descBox.appendChild(descInput);
+
+    // Price and Amount (side by side)
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '12px';
+    row.style.marginTop = '10px';
+
+    const priceBox = document.createElement('div');
+    priceBox.className = 'input-box small';
+    const priceInput = document.createElement('input');
+    priceInput.type = 'text';
+    priceInput.className = 'product-input';
+    priceInput.required = true;
+    priceInput.placeholder = 'Price';
+    priceBox.appendChild(priceInput);
+
+    const amountBox = document.createElement('div');
+    amountBox.className = 'input-box small';
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.className = 'product-input';
+    amountInput.required = true;
+    amountInput.placeholder = 'Amount';
+    amountBox.appendChild(amountInput);
+
+    row.appendChild(priceBox);
+    row.appendChild(amountBox);
+
+    // Add Product button
+    const addBtnBox = document.createElement('div');
+    addBtnBox.className = 'input-box large';
+    addBtnBox.style.marginTop = '14px';
+    const addBtn = document.createElement('button');
+    addBtn.textContent = 'Add Product';
+    addBtn.type = 'button';
+    addBtn.className = 'add-product-btn';
+    addBtnBox.appendChild(addBtn);
+
+    // Append all to form
+    formDiv.appendChild(productNameBox);
+    formDiv.appendChild(descBox);
+    formDiv.appendChild(row);
+    formDiv.appendChild(addBtnBox);
+
+    // Add a close button to return to main content
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.className = 'add-product-main-btn';
+    closeBtn.style.marginTop = '10px';
+    closeBtn.onclick = () => {
+        formDiv.remove();
+    };
+    formDiv.appendChild(closeBtn);
+
+    document.body.appendChild(formDiv);
+
+    // Add product logic
+    addBtn.onclick = () => {
+        const name = productNameInput.value.trim();
+        const desc = descInput.value.trim();
+        const price = priceInput.value.trim();
+        const amount = parseInt(amountInput.value, 10);
+
+        if (!name || !desc || !price || isNaN(amount)) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        products.push({
+            name,
+            description: desc,
+            price,
+            quantity: amount
+        });
+
+        formDiv.remove();
+        displayProducts();
+    };
+}
