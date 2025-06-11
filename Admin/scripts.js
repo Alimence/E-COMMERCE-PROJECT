@@ -1,14 +1,6 @@
 const users = [
-    {
-       username: 'admin',
-       password: 'admin123',
-       role: 'admin'
-    },
-    {
-        username: 'editor',
-       password: 'editor123',
-       role: 'editor'
-    }, 
+    { username: 'admin', password: 'admin123', role: 'admin' },
+    { username: 'editor', password: 'editor123', role: 'editor' },
     {
         username: 'viewer',
        password: 'viewer123',
@@ -109,7 +101,11 @@ const displayProducts = () => {
     heading.textContent = 'List of All Products';
     productsSection.appendChild(heading);
 
-    products.forEach(product => {
+    // Get current user role
+    const currentUser = getCurrentUser();
+    const canEditQuantity = currentUser && (currentUser.role === 'admin' || currentUser.role === 'editor');
+
+    products.forEach((product, index) => {
         const row = document.createElement('div');
         row.className = 'product-row';
 
@@ -128,6 +124,48 @@ const displayProducts = () => {
         row.appendChild(productName);
         row.appendChild(desc);
         row.appendChild(price);
+
+        // Quantity controls for admin/editor
+        if (canEditQuantity) {
+            const quantityBox = document.createElement('div');
+            quantityBox.className = 'quantity-box';
+
+            const minusBtn = document.createElement('button');
+            minusBtn.type = 'button';
+            minusBtn.textContent = '-';
+
+            const quantityInput = document.createElement('input');
+            quantityInput.type = 'number';
+            quantityInput.min = 0;
+            quantityInput.value = product.quantity || 0;
+            quantityInput.id = `quantity-${index}`;
+            quantityInput.style.width = '36px';
+            quantityInput.readOnly = true;
+
+            const plusBtn = document.createElement('button');
+            plusBtn.type = 'button';
+            plusBtn.textContent = '+';
+
+            // Button events
+            minusBtn.onclick = () => {
+                let val = parseInt(quantityInput.value, 10);
+                if (val > 0) {
+                    quantityInput.value = val - 1;
+                    product.quantity = val - 1;
+                }
+            };
+            plusBtn.onclick = () => {
+                let val = parseInt(quantityInput.value, 10);
+                quantityInput.value = val + 1;
+                product.quantity = val + 1;
+            };
+
+            quantityBox.appendChild(minusBtn);
+            quantityBox.appendChild(quantityInput);
+            quantityBox.appendChild(plusBtn);
+
+            row.appendChild(quantityBox);
+        }
 
         productsSection.appendChild(row);
     });
@@ -164,7 +202,6 @@ const displayContent = (role) => {
         };
         contentDiv.appendChild(manageBtn);
 
-        // Add View Products button between Manage Users and Logout
         const viewProductsBtn = document.createElement('button');
         viewProductsBtn.textContent = 'View Products';
         viewProductsBtn.onclick = () => {
@@ -172,16 +209,20 @@ const displayContent = (role) => {
         };
         contentDiv.appendChild(viewProductsBtn);
     } else if (role === 'editor') {
-        contentDiv.innerHTML += `
-            <button>View</button>
-            <button>Edit</button>
-            <button>Delete</button>
-        `;
+        const viewProductsBtn = document.createElement('button');
+        viewProductsBtn.textContent = 'View Products';
+        viewProductsBtn.onclick = () => {
+            displayProducts();
+        };
+        contentDiv.appendChild(viewProductsBtn);
     } else if (role === 'viewer') {
-        contentDiv.innerHTML += `
-            <button>Edit</button>
-            <button>View</button>
-        `;
+        // Viewer can only view products, no edit/delete
+        const viewProductsBtn = document.createElement('button');
+        viewProductsBtn.textContent = 'View Products';
+        viewProductsBtn.onclick = () => {
+            displayProducts();
+        };
+        contentDiv.appendChild(viewProductsBtn);
     }
 
     const logoutButton = document.createElement('button');
@@ -203,16 +244,21 @@ const displayUserManagement = () => {
 
     userManagementDiv.innerHTML = '<h2>User Management</h2>';
 
+    // For each user, create a styled box similar to product-row
     users.forEach((user, index) => {
         const userDiv = document.createElement('div');
-        userDiv.classList.add('user-row');
+        userDiv.classList.add('product-row'); // Use the same style as product-row
+
         userDiv.innerHTML = `
-            <span>${user.username}</span>
-            <select data-index="${index}">
-                <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
-                <option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Editor</option>
-                <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>Viewer</option>
-            </select>
+            <div><strong>Username:</strong> ${user.username}</div>
+            <div><strong>Role:</strong> ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}</div>
+            <div>
+                <select data-index="${index}">
+                    <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    <option value="editor" ${user.role === 'editor' ? 'selected' : ''}>Editor</option>
+                    <option value="viewer" ${user.role === 'viewer' ? 'selected' : ''}>Viewer</option>
+                </select>
+            </div>
         `;
         userManagementDiv.appendChild(userDiv);
     });

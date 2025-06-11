@@ -74,7 +74,11 @@ button:hover {
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 32px; /* Added margin bottom */
+    margin-bottom: 32px; /* Add space below welcome section */
+}
+
+.content h2 {
+    text-align: center;
 }
 
 .logout-button{
@@ -103,52 +107,70 @@ background-color: skyblue;
     margin: 0 10px;
 }
 
-.user-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 10px 0;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
+/* Reduce overall size of products section */
 .products-section {
-    width: 600px;
-    padding: 20px;
+    width: 400px;
+    margin-left: 10px;
+    padding: 14px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-top: 48px;      /* Increased space from admin section */
-    margin-bottom: 20px;
-    font-size: 0.95rem;    /* Reduced font size */
+    margin-top: 32px;
+    margin-bottom: 16px;
+    font-size: 0.92rem;
 }
 
-.products-section h2 {
-    margin-bottom: 18px;
-    text-align: center;
-    color: #333;
-    font-size: 1.2rem;     /* Slightly smaller heading */
-}
-
+/* Make product-row horizontal and align items */
 .product-row {
     background: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 14px 18px;
-    margin-bottom: 16px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
     display: flex;
-    gap: 24px;
+    flex-direction: column;      /* Vertical layout */
+    align-items: flex-start;     /* Align to left */
+    font-size: 0.95rem;
+    gap: 6px;                    /* Space between fields */
+}
+
+/* Each info column gets equal width except quantity */
+.product-row > div {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+/* Reduce and style the quantity box */
+.quantity-box {
+    display: flex;
     align-items: center;
-    justify-content: flex-start;
-    font-size: 0.97rem;    /* Slightly smaller font for rows */
+    gap: 4px;
+    background: #eef2ff;
+    border-radius: 6px;
+    padding: 4px 6px;
+    width: auto;
+    max-width: 110px;
+    min-width: 90px;
 }
 
-.product-row div {
-    flex: 1;
-}
-
-.product-row strong {
+.quantity-box label {
+    margin-right: 4px;
     font-weight: bold;
-    margin-right: 6px;
+    font-size: 0.95em;
+}
+
+.quantity-box button {
+    width: 22px;
+    height: 22px;
+    font-size: 1em;
+    padding: 0;
+}
+
+.quantity-box input[type="number"] {
+    width: 36px;
+    height: 22px;
+    font-size: 0.95em;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
