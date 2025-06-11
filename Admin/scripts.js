@@ -80,6 +80,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (currentUser) {
         displayContent(currentUser.role);
     }
+
+    document.getElementById('closeBtn').addEventListener('click', function() {
+        document.querySelector('.login-container').style.display = 'none';
+    });
+
+    const closeProductListBtn = document.getElementById('closeProductListBtn');
+    if (closeProductListBtn) {
+        closeProductListBtn.addEventListener('click', function() {
+            document.querySelector('.product-list').style.display = 'none';
+        });
+    }
 });
 
 const clearDynamicContent = () => {
@@ -120,6 +131,14 @@ const displayProducts = () => {
 
         productsSection.appendChild(row);
     });
+
+    // Add Close button at the bottom
+    const closeButton = document.createElement('button');
+    closeButton.textContent = 'Close';
+    closeButton.onclick = () => {
+        productsSection.remove();
+    };
+    productsSection.appendChild(closeButton);
 
     document.body.appendChild(productsSection);
 };
