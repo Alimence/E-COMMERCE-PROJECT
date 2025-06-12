@@ -238,6 +238,23 @@ const displayContent = (role) => {
             displayProducts();
         };
         contentDiv.appendChild(viewProductsBtn);
+
+        // Add Product section for editor
+        const addProductSection = document.createElement('div');
+        addProductSection.className = 'add-product-section';
+
+        const addProductBtn = document.createElement('button');
+        addProductBtn.textContent = 'Add Product';
+        addProductBtn.type = 'button';
+        addProductBtn.className = 'add-product-main-btn';
+        addProductBtn.onclick = () => {
+            // Remove other sections
+            document.querySelectorAll('.user-management, .products-section, .add-product-form').forEach(el => el.remove());
+            showAddProductSection();
+        };
+
+        addProductSection.appendChild(addProductBtn);
+        contentDiv.appendChild(addProductSection);
     } else if (role === 'viewer') {
         // Viewer can only view products, no edit/delete
         const viewProductsBtn = document.createElement('button');
@@ -258,6 +275,16 @@ const displayContent = (role) => {
         showShopProductSection();
     };
     contentDiv.appendChild(shopProductsBtn);
+
+    // View Cart button for all roles
+    const viewCartBtn = document.createElement('button');
+    viewCartBtn.textContent = 'View Cart';
+    viewCartBtn.className = 'view-cart-btn'; // Optional, for future custom styling
+    viewCartBtn.onclick = () => {
+        // Implement your view cart logic here
+        alert('Cart feature coming soon!');
+    };
+    contentDiv.appendChild(viewCartBtn);
 
     const logoutButton = document.createElement('button');
     logoutButton.textContent = 'Logout';
@@ -324,7 +351,21 @@ const changeRole = (index, newRole) => {
 
 const logout = () => {
     clearCurrentUser();
-    location.reload();
+
+    // Remove all dynamic sections
+    document.querySelectorAll(
+        '.content, .user-management, .products-section, .add-product-form, .shop-product-section'
+    ).forEach(el => el.remove());
+
+    // Show the login section
+    const loginContainer = document.querySelector('.login-container');
+    if (loginContainer) loginContainer.style.display = '';
+
+    // Optionally clear messages
+    const errorContainer = document.querySelector('#errorMessage');
+    const successContainer = document.querySelector('#successMessage');
+    if (errorContainer) errorContainer.textContent = '';
+    if (successContainer) successContainer.textContent = '';
 };
 
 function showAddProductForm(contentDiv) {
