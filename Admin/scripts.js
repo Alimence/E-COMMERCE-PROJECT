@@ -26,6 +26,12 @@ const products = [
     }
 ];
 
+let cart = [];
+const savedCart = localStorage.getItem('cart');
+if (savedCart) {
+    cart = JSON.parse(savedCart);
+}
+
 // Load products from localStorage if available
 const savedProducts = localStorage.getItem('products');
 if (savedProducts) {
@@ -281,8 +287,7 @@ const displayContent = (role) => {
     viewCartBtn.textContent = 'View Cart';
     viewCartBtn.className = 'view-cart-btn'; // Optional, for future custom styling
     viewCartBtn.onclick = () => {
-        // Implement your view cart logic here
-        alert('Cart feature coming soon!');
+        showCartSection();
     };
     contentDiv.appendChild(viewCartBtn);
 
@@ -613,7 +618,7 @@ function showShopProductSection() {
     heading.style.marginBottom = '16px';
     section.appendChild(heading);
 
-    // Alert message
+    // Alert message area
     const alertMsg = document.createElement('div');
     alertMsg.style.display = 'none';
     alertMsg.style.margin = '0 0 12px 0';
@@ -701,22 +706,35 @@ function showShopProductSection() {
 
         // Reduce quantity
         product.quantity = (product.quantity || 0) - amount;
-
-        // Save to localStorage
         localStorage.setItem('products', JSON.stringify(products));
+
+        // Add to cart
+        let cartItem = cart.find(item => item.name.toLowerCase() === product.name.toLowerCase());
+        if (cartItem) {
+            cartItem.amount += amount;
+        } else {
+            cart.push({
+                name: product.name,
+                price: product.price,
+                amount: amount
+            });
+        }
+        saveCart();
 
         // Show success alert
         alertMsg.style.display = 'block';
         alertMsg.style.background = '#d4edda';
         alertMsg.style.color = '#155724';
         alertMsg.style.border = '1px solid #c3e6cb';
-        alertMsg.textContent = `Product (${product.name}) added to cart successfully`;
+        alertMsg.textContent = 'Your product was added to your cart';
+
+        // Clear input boxes for next entry
+        productTypeInput.value = '';
+        amountInput.value = '';
 
         // Update product list if open
         document.querySelectorAll('.products-section').forEach(el => el.remove());
-        setTimeout(() => {
-            displayProducts();
-        }, 500);
+        displayProducts();
     };
 
     // Close button
@@ -733,6 +751,117 @@ function showShopProductSection() {
     document.body.appendChild(section);
 }
 
+function showCartSection() {
+    // Remove any existing cart section
+    document.querySelectorAll('.cart-section').forEach(el => el.remove());
+
+    // Create section
+    const section = document.createElement('div');
+    section.className = 'cart-section';
+    section.style.background = '#f9f9f9';
+    section.style.border = '1.5px solid #007bff';
+    section.style.borderRadius = '10px';
+    section.style.padding = '18px 18px 12px 18px';
+    section.style.margin = '30px auto';
+    section.style.width = '370px';
+    section.style.boxShadow = '0 0 8px rgba(0,0,0,0.06)';
+    section.style.position = 'relative';
+
+    // Heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'Items On Your Cart';
+    heading.style.textAlign = 'center';
+    heading.style.marginBottom = '16px';
+    section.appendChild(heading);
+
+    if (cart.length === 0) {
+        const emptyMsg = document.createElement('div');
+        emptyMsg.textContent = 'Your cart is empty.';
+        emptyMsg.style.textAlign = 'center';
+        emptyMsg.style.margin = '12px 0';
+        section.appendChild(emptyMsg);
+    } else {
+        cart.forEach((item, idx) => {
+            const itemBox = document.createElement('div');
+            itemBox.style.display = 'flex';
+            itemBox.style.alignItems = 'center';
+            itemBox.style.justifyContent = 'space-between';
+            itemBox.style.background = '#fff';
+            itemBox.style.border = '1px solid #bbb';
+            itemBox.style.borderRadius = '7px';
+            itemBox.style.padding = '10px 10px';
+            itemBox.style.marginBottom = '10px';
+            itemBox.style.gap = '10px';
+
+            // Info
+            const info = document.createElement('div');
+            info.style.display = 'flex';
+            info.style.gap = '18px';
+            info.innerHTML = `
+                <span><strong>Product:</strong> ${item.name}</span>
+                <span><strong>Amount:</strong> ${item.amount}</span>
+                <span><strong>Price:</strong> ${item.price}</span>
+            `;
+
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.textContent = 'Remove';
+            removeBtn.style.width = 'auto';
+            removeBtn.style.background = '#ff4d4d';
+            removeBtn.style.color = '#fff';
+            removeBtn.style.border = 'none';
+            removeBtn.style.borderRadius = '4px';
+            removeBtn.style.padding = '6px 12px';
+            removeBtn.style.marginLeft = '10px';
+            removeBtn.style.cursor = 'pointer';
+            removeBtn.onclick = () => {
+                // Restore product quantity
+                const prod = products.find(p => p.name.toLowerCase() === item.name.toLowerCase());
+                if (prod) {
+                    prod.quantity = (prod.quantity || 0) + item.amount;
+                    localStorage.setItem('products', JSON.stringify(products));
+                }
+                // Remove from cart
+                cart.splice(idx, 1);
+                saveCart();
+
+                // Show alert message for removal
+                alertMsg.style.display = 'block';
+                alertMsg.style.background = '#f8d7da';
+                alertMsg.style.color = '#721c24';
+                alertMsg.style.border = '1px solid #f5c6cb';
+                alertMsg.textContent = 'Your product has been deleted from cart';
+
+                // Update product list if open
+                document.querySelectorAll('.products-section').forEach(el => el.remove());
+                displayProducts();
+
+                // Refresh cart section after a short delay to show the alert
+                setTimeout(() => {
+                    section.remove();
+                    showCartSection();
+                }, 900);
+            };
+
+            itemBox.appendChild(info);
+            itemBox.appendChild(removeBtn);
+            section.appendChild(itemBox);
+        });
+    }
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.className = 'add-product-main-btn';
+    closeBtn.style.marginTop = '10px';
+    closeBtn.onclick = () => {
+        section.remove();
+    };
+    section.appendChild(closeBtn);
+
+    document.body.appendChild(section);
+}
+
 // Find the last "Phone" product and remove it
 for (let i = products.length - 1; i >= 0; i--) {
     if (products[i].name.toLowerCase() === "phone") {
@@ -743,4 +872,16 @@ for (let i = products.length - 1; i >= 0; i--) {
 // Update localStorage
 localStorage.setItem('products', JSON.stringify(products));
 // Optionally refresh the product list if needed
+if (typeof displayProducts === 'function') displayProducts();
+
+// Remove the "Wireless Mouse" product from the products array
+for (let i = products.length - 1; i >= 0; i--) {
+    if (products[i].name.toLowerCase() === "wireless mouse") {
+        products.splice(i, 1);
+        break;
+    }
+}
+// Update localStorage
+localStorage.setItem('products', JSON.stringify(products));
+// Refresh the product list if needed
 if (typeof displayProducts === 'function') displayProducts();
