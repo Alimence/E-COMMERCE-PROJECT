@@ -244,3 +244,14 @@ background-color: skyblue;
 .add-product-main-btn:hover {
     background-color: #0056b3;   /* Light blue on hover */
 }
+
+.shop-product-section {
+    background: #f9f9f9;
+    border: 1.5px solid #007bff;
+    border-radius: 10px;
+    padding: 18px 18px 12px 18px;
+    margin: 30px auto;
+    width: 370px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.06);
+    position: relative;
+}

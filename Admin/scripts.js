@@ -26,6 +26,13 @@ const products = [
     }
 ];
 
+// Load products from localStorage if available
+const savedProducts = localStorage.getItem('products');
+if (savedProducts) {
+    products.length = 0; // Clear the array
+    products.push(...JSON.parse(savedProducts));
+}
+
 const saveCurrentUser = (userName, role) => {
     localStorage.setItem('currentUser', JSON.stringify({userName, role}));
 };
@@ -241,6 +248,17 @@ const displayContent = (role) => {
         contentDiv.appendChild(viewProductsBtn);
     }
 
+    // Shop Products button for all roles
+    const shopProductsBtn = document.createElement('button');
+    shopProductsBtn.textContent = 'Shop Products';
+    shopProductsBtn.className = 'shop-products-btn'; // Optional, for future custom styling
+    // Add your event handler here, e.g.:
+    shopProductsBtn.onclick = () => {
+        // Do NOT remove or hide other sections
+        showShopProductSection();
+    };
+    contentDiv.appendChild(shopProductsBtn);
+
     const logoutButton = document.createElement('button');
     logoutButton.textContent = 'Logout';
     logoutButton.classList.add('logout-button');
@@ -405,6 +423,9 @@ function showAddProductForm(contentDiv) {
             quantity: amount
         });
 
+        // Save to localStorage
+        localStorage.setItem('products', JSON.stringify(products));
+
         formDiv.remove();
         displayProducts();
     };
@@ -518,7 +539,167 @@ function showAddProductSection() {
             quantity: amount
         });
 
+        // Save to localStorage
+        localStorage.setItem('products', JSON.stringify(products));
+
         formDiv.remove();
         displayProducts();
     };
 }
+
+function showShopProductSection() {
+    // Remove any existing shop section
+    document.querySelectorAll('.shop-product-section').forEach(el => el.remove());
+
+    // DO NOT hide main content here
+
+    // Create section
+    const section = document.createElement('div');
+    section.className = 'shop-product-section';
+    section.style.background = '#f9f9f9';
+    section.style.border = '1.5px solid #007bff';
+    section.style.borderRadius = '10px';
+    section.style.padding = '18px 18px 12px 18px';
+    section.style.margin = '30px auto';
+    section.style.width = '370px';
+    section.style.boxShadow = '0 0 8px rgba(0,0,0,0.06)';
+    section.style.position = 'relative';
+
+    // Heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'Purchase Product';
+    heading.style.textAlign = 'center';
+    heading.style.marginBottom = '16px';
+    section.appendChild(heading);
+
+    // Alert message
+    const alertMsg = document.createElement('div');
+    alertMsg.style.display = 'none';
+    alertMsg.style.margin = '0 0 12px 0';
+    alertMsg.style.padding = '8px';
+    alertMsg.style.background = '#d4edda';
+    alertMsg.style.color = '#155724';
+    alertMsg.style.border = '1px solid #c3e6cb';
+    alertMsg.style.borderRadius = '5px';
+    alertMsg.style.textAlign = 'center';
+    section.appendChild(alertMsg);
+
+    // Product type input
+    const productTypeBox = document.createElement('div');
+    productTypeBox.className = 'input-box large';
+    const productTypeInput = document.createElement('input');
+    productTypeInput.type = 'text';
+    productTypeInput.className = 'product-input';
+    productTypeInput.required = true;
+    productTypeInput.placeholder = 'Product type';
+    productTypeBox.appendChild(productTypeInput);
+    section.appendChild(productTypeBox);
+
+    // Hide placeholder on typing (handled by default with placeholder)
+    productTypeInput.addEventListener('input', function() {
+        this.placeholder = '';
+    });
+
+    // Amount input
+    const amountBox = document.createElement('div');
+    amountBox.className = 'input-box large';
+    amountBox.style.marginTop = '10px';
+    const amountInput = document.createElement('input');
+    amountInput.type = 'number';
+    amountInput.className = 'product-input';
+    amountInput.required = true;
+    amountInput.placeholder = 'Amount';
+    amountBox.appendChild(amountInput);
+    section.appendChild(amountBox);
+
+    amountInput.addEventListener('focus', function() {
+        this.placeholder = '';
+    });
+
+    // Add To Cart button
+    const addToCartBtn = document.createElement('button');
+    addToCartBtn.textContent = 'Add To Cart';
+    addToCartBtn.type = 'button';
+    addToCartBtn.className = 'add-product-main-btn';
+    addToCartBtn.style.marginTop = '14px';
+    section.appendChild(addToCartBtn);
+
+    // Add To Cart logic
+    addToCartBtn.onclick = () => {
+        const productName = productTypeInput.value.trim();
+        const amount = parseInt(amountInput.value, 10);
+
+        if (!productName || isNaN(amount) || amount <= 0) {
+            alertMsg.style.display = 'block';
+            alertMsg.style.background = '#f8d7da';
+            alertMsg.style.color = '#721c24';
+            alertMsg.style.border = '1px solid #f5c6cb';
+            alertMsg.textContent = 'Please enter a valid product and amount.';
+            return;
+        }
+
+        // Find product
+        const product = products.find(p => p.name.toLowerCase() === productName.toLowerCase());
+        if (!product) {
+            alertMsg.style.display = 'block';
+            alertMsg.style.background = '#f8d7da';
+            alertMsg.style.color = '#721c24';
+            alertMsg.style.border = '1px solid #f5c6cb';
+            alertMsg.textContent = 'Product not found.';
+            return;
+        }
+
+        if ((product.quantity || 0) < amount) {
+            alertMsg.style.display = 'block';
+            alertMsg.style.background = '#f8d7da';
+            alertMsg.style.color = '#721c24';
+            alertMsg.style.border = '1px solid #f5c6cb';
+            alertMsg.textContent = 'Not enough quantity available.';
+            return;
+        }
+
+        // Reduce quantity
+        product.quantity = (product.quantity || 0) - amount;
+
+        // Save to localStorage
+        localStorage.setItem('products', JSON.stringify(products));
+
+        // Show success alert
+        alertMsg.style.display = 'block';
+        alertMsg.style.background = '#d4edda';
+        alertMsg.style.color = '#155724';
+        alertMsg.style.border = '1px solid #c3e6cb';
+        alertMsg.textContent = `Product (${product.name}) added to cart successfully`;
+
+        // Update product list if open
+        document.querySelectorAll('.products-section').forEach(el => el.remove());
+        setTimeout(() => {
+            displayProducts();
+        }, 500);
+    };
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'Close';
+    closeBtn.className = 'add-product-main-btn';
+    closeBtn.style.marginTop = '10px';
+    closeBtn.onclick = () => {
+        section.remove();
+        // DO NOT show mainContent here
+    };
+    section.appendChild(closeBtn);
+
+    document.body.appendChild(section);
+}
+
+// Find the last "Phone" product and remove it
+for (let i = products.length - 1; i >= 0; i--) {
+    if (products[i].name.toLowerCase() === "phone") {
+        products.splice(i, 1);
+        break;
+    }
+}
+// Update localStorage
+localStorage.setItem('products', JSON.stringify(products));
+// Optionally refresh the product list if needed
+if (typeof displayProducts === 'function') displayProducts();
